@@ -1,6 +1,6 @@
 package com.henriquephil.menk;
 
-import com.henriquephil.menk.domain.Cliente;
+import com.henriquephil.menk.domain.Entidade;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +18,7 @@ public class MenkApplication {
 	}
 
 	@PostMapping
-	public Cliente get(@RequestBody Cliente echo) {
+	public Entidade get(@RequestBody Entidade echo) {
 		return echo;
 	}
 
