@@ -2,6 +2,8 @@ package com.henriquephil.menk.controller;
 
 import com.henriquephil.menk.domain.Entidade;
 import com.henriquephil.menk.service.EntidadeService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,15 +17,20 @@ public class EntidadeController {
     }
 
     @PostMapping
-    public void post(@RequestBody Entidade entidade) {
+    public Entidade post(@RequestBody Entidade entidade) {
         entidade.setId(null);
-        entidadeService.save(entidade);
+        return entidadeService.save(entidade);
     }
 
     @PutMapping("/{id}")
-    public void put(@PathVariable String id, @RequestBody Entidade entidade) {
+    public Entidade put(@PathVariable String id, @RequestBody Entidade entidade) {
         entidade.setId(id);
-        entidadeService.save(entidade);
+        return entidadeService.save(entidade);
+    }
+
+    @GetMapping
+    public Page<Entidade> getPage(Pageable page) {
+        return entidadeService.findPage(page);
     }
 
     @GetMapping("/{id}")

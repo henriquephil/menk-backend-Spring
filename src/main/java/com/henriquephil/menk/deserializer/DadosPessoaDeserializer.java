@@ -1,4 +1,4 @@
-package com.henriquephil.menk;
+package com.henriquephil.menk.deserializer;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.henriquephil.menk.domain.DadosPessoa;
 import com.henriquephil.menk.domain.DadosPessoaFisica;
 import com.henriquephil.menk.domain.DadosPessoaJuridica;
@@ -23,6 +24,6 @@ public class DadosPessoaDeserializer extends JsonDeserializer {
         if (node.has("cnpj")) {
             return oc.treeToValue(node, DadosPessoaJuridica.class);
         }
-        return null;
+        throw MismatchedInputException.from(p, DadosPessoa.class, "Não foi possível identificar o formado dos dados da pessoa");
     }
 }

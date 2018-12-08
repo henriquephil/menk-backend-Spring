@@ -1,14 +1,16 @@
 package com.henriquephil.menk.service;
 
 import com.henriquephil.menk.domain.Produto;
-import com.henriquephil.menk.exceptions.NoDataFoundException;
+import com.henriquephil.menk.exceptions.NoDocumentFoundException;
 import com.henriquephil.menk.repository.ProdutoRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@Transactional
 public class ProdutoService {
     private ProdutoRepository produtoRepository;
 
@@ -25,6 +27,6 @@ public class ProdutoService {
     }
 
     public Produto findById(String id) {
-        return produtoRepository.findById(id).orElseThrow(NoDataFoundException::new);
+        return produtoRepository.findById(id).orElseThrow(NoDocumentFoundException::new);
     }
 }
