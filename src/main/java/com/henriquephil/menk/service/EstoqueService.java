@@ -3,69 +3,71 @@ package com.henriquephil.menk.service;
 import com.henriquephil.menk.domain.*;
 import com.henriquephil.menk.domain.enums.EstoqueMovimentoTipo;
 import com.henriquephil.menk.repository.EstoqueMovimentoRepository;
-import com.henriquephil.menk.repository.EstoqueSaldoRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @Transactional
 public class EstoqueService {
     private EstoqueMovimentoRepository estoqueMovimentoRepository;
-    private EstoqueSaldoRepository estoqueSaldoRepository;
 
-    public EstoqueService(EstoqueMovimentoRepository estoqueMovimentoRepository, EstoqueSaldoRepository estoqueSaldoRepository) {
+    public EstoqueService(EstoqueMovimentoRepository estoqueMovimentoRepository) {
         this.estoqueMovimentoRepository = estoqueMovimentoRepository;
-        this.estoqueSaldoRepository = estoqueSaldoRepository;
+    }
+
+    public void recalcularEstoque(EstoqueLocal local, Produto produto, LocalDateTime de) {
+        Optional<EstoqueMovimento> ultimoMovimento = estoqueMovimentoRepository
+                .findByLocalAndProdutoAndDataLessThanOrderByDataDesc(local, produto, de, PageRequest.of(0, 1))
+                .stream().findFirst();
+        BigDecimal quantidadeFinal = ultimoMovimento.map(EstoqueMovimento::getQuantidadeEstoque).orElse(BigDecimal.ZERO);
+        BigDecimal valorFinal = ultimoMovimento.map(EstoqueMovimento::getValorEstoque).orElse(BigDecimal.ZERO);
+        List<EstoqueMovimento> movimentos = estoqueMovimentoRepository.findByLocalAndProdutoAndDataGreaterThanEqualOrderByDataAsc(local, produto, de);
+        for (EstoqueMovimento movimento : movimentos) {
+            switch (movimento.getTipo()) {
+                case ENTRADA:
+                    quantidadeFinal = quantidadeFinal.add(movimento.getQuantidade());
+                    valorFinal = valorFinal.add(movimento.getValor());
+                    break;
+                case SAIDA:
+                    quantidadeFinal = quantidadeFinal.subtract(movimento.getQuantidade());
+                    valorFinal = valorFinal.subtract(movimento.getValor());
+                    break;
+            }
+            movimento.corrigeSaldo(quantidadeFinal, valorFinal);
+            estoqueMovimentoRepository.save(movimento);
+        }
     }
 
     public EstoqueMovimento save(EstoqueMovimento movimento) {
-        // TODO calcular/recalcular CMV, veriricar se mudou produto
         movimento = estoqueMovimentoRepository.save(movimento);
-        EstoqueSaldo saldo = getSaldo(movimento.getLocal(), movimento.getProduto());
-        saldo.setQuantidade(saldo.getQuantidade().add(movimento.getQuantidade()));
-        estoqueSaldoRepository.save(saldo);
+        recalcularEstoque(movimento.getLocal(), movimento.getProduto(), movimento.getData());
         return movimento;
     }
 
-    public void delete(EstoqueMovimento movimento) {
-        // TODO calcular/recalcular CMV
-        estoqueMovimentoRepository.delete(movimento);
-        EstoqueSaldo saldo = getSaldo(movimento.getLocal(), movimento.getProduto());
-        saldo.setQuantidade(saldo.getQuantidade().subtract(movimento.getQuantidade()));
-        estoqueSaldoRepository.save(saldo);
-    }
-
-    public EstoqueSaldo getSaldo(EstoqueLocal local, Produto produto) {
-        return estoqueSaldoRepository.findByLocalAndProduto(local, produto).orElse(new EstoqueSaldo(local, produto));
-    }
-
-    public Optional<EstoqueMovimento> findByOrigem(EstoqueMovimentoOrigem origem) {
-        // TODO verificar se consulta por origem funciona como esperado
-        return estoqueMovimentoRepository.findByOrigem(origem);
-    }
-
-    public EstoqueMovimento criarPelaOrigem(EstoqueMovimentoOrigem origem, EstoqueMovimentoTipo tipo) {
-        return save(new EstoqueMovimento(origem.getLocal(),
+    public EstoqueMovimento save(EstoqueLocal local, LocalDateTime dataMovimento, EstoqueMovimentoOrigem origem, EstoqueMovimentoTipo tipo) {
+        findByOrigem(origem).ifPresent(this::delete);
+        return save(new EstoqueMovimento(local,
                 origem.getProduto(),
+                dataMovimento,
                 tipo,
                 origem.getQuantidade(),
                 origem.getValor(),
                 origem));
     }
 
-    public EstoqueMovimento movimentar(final EstoqueMovimento estoqueMovimento) {
-        //TODO implementar método, de verdade
-        Optional<EstoqueMovimento> movimento = findByOrigem(estoqueMovimento.getOrigem());
-        if (movimento.isPresent()) {
-            EstoqueMovimento mov = movimento.get();
-            mov.setProduto(estoqueMovimento.getProduto());
-            mov.setQuantidade(estoqueMovimento.getQuantidade());
-            mov.setValor(estoqueMovimento.getValor());
-            return save(mov);
-        } else {
-            return save(estoqueMovimento);
-        }
+    public void delete(EstoqueMovimento movimento) {
+        estoqueMovimentoRepository.delete(movimento);
+        recalcularEstoque(movimento.getLocal(), movimento.getProduto(), movimento.getData());
+    }
+
+    public Optional<EstoqueMovimento> findByOrigem(EstoqueMovimentoOrigem origem) {
+        // TODO verificar se consulta por origem funciona como esperado
+        return estoqueMovimentoRepository.findByOrigem(origem);
     }
 }

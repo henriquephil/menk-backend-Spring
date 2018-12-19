@@ -1,16 +1,21 @@
 package com.henriquephil.menk.domain;
 
-import lombok.NonNull;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
-@Data
-@NoArgsConstructor
+@Getter
+@ToString
 public class CondicaoPagamentoParcela {
     @NonNull
     private Integer dias;
     @NonNull
     private BigDecimal fracao;
+
+    public CondicaoPagamentoParcela() {}
+
+    public CondicaoPagamentoParcela(Integer dias, BigDecimal fracao) {
+        this.dias = dias;
+        this.fracao = fracao;
+    }
 }

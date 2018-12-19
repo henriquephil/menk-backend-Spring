@@ -3,11 +3,8 @@ package com.henriquephil.menk.domain;
 import java.math.BigDecimal;
 
 public interface EstoqueMovimentoOrigem {
-    EstoqueLocal getLocal();
-
+    String getId();
     Produto getProduto();
-
     BigDecimal getQuantidade();
-
     BigDecimal getValor();
 }

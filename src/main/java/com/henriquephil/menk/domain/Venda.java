@@ -1,9 +1,7 @@
 package com.henriquephil.menk.domain;
 
 import com.henriquephil.menk.domain.enums.VendaStatus;
-import lombok.NonNull;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.util.Assert;
@@ -13,8 +11,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
+@Getter
+@ToString
 @Document
 public class Venda implements ContaReceberOrigem {
     private String id;
@@ -27,12 +25,11 @@ public class Venda implements ContaReceberOrigem {
     private LocalDateTime dataHoraCriacao = LocalDateTime.now();
     private LocalDateTime dataHoraEmissao;
     private String observacao;
+    @DBRef
     @NonNull
     private List<VendaItem> itens = new ArrayList<>();
     @DBRef
     private CondicaoPagamento condicaoPagamento;
-    @DBRef(lazy = true)
-    private List<ContaReceber> contasReceber = new ArrayList<>();
 
     public BigDecimal getTotalBruto() {
         return itens.stream()

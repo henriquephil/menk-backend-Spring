@@ -42,13 +42,12 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        String secretEncoded = passwordEncoder.encode("secret");
         clients.inMemory()
                 .withClient("client")
-                .secret(secretEncoded)
+                .secret(passwordEncoder.encode("secret"))
                 .authorizedGrantTypes("password", "refresh_token")
                 .scopes("read", "write")
-                .accessTokenValiditySeconds(30 * 60)
+                .accessTokenValiditySeconds(10 * 60)
                 .refreshTokenValiditySeconds(7 * 24 * 60 * 60);
     }
 
@@ -69,7 +68,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public DefaultTokenServices tokenServices() {
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
-        defaultTokenServices.setSupportRefreshToken(true);
         defaultTokenServices.setTokenEnhancer(accessTokenConverter());
         return defaultTokenServices;
     }

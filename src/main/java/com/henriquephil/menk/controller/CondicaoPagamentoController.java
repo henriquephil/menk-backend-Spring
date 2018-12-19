@@ -4,7 +4,10 @@ import com.henriquephil.menk.domain.CondicaoPagamento;
 import com.henriquephil.menk.service.CondicaoPagamentoService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 @RestController
 @RequestMapping("condicao-pagamento")
@@ -17,13 +20,13 @@ public class CondicaoPagamentoController {
 
     @PostMapping
     public CondicaoPagamento post(@RequestBody CondicaoPagamento condicaoPagamento) {
-        condicaoPagamento.setId(null);
+        Assert.isTrue(condicaoPagamento.getId() == null, "Atributo id já preenchido");
         return condicaoPagamentoService.save(condicaoPagamento);
     }
 
     @PutMapping("/{id}")
     public CondicaoPagamento put(@PathVariable String id, @RequestBody CondicaoPagamento condicaoPagamento) {
-        condicaoPagamento.setId(id);
+        Assert.isTrue(!Objects.equals(id, condicaoPagamento.getId()), "Atributo id inconsistente");
         return condicaoPagamentoService.save(condicaoPagamento);
     }
 

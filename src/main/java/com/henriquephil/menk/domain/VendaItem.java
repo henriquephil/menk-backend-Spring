@@ -1,15 +1,16 @@
 package com.henriquephil.menk.domain;
 
-import lombok.NonNull;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 
-@Data
-@NoArgsConstructor
+@Getter
+@ToString
+@Document
 public class VendaItem implements EstoqueMovimentoOrigem {
+    private String id;
     @DBRef
     @NonNull
     private Produto produto;

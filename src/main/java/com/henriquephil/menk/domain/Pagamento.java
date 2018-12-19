@@ -1,14 +1,12 @@
 package com.henriquephil.menk.domain;
 
-import lombok.NonNull;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
+@Getter
+@ToString
 public class Pagamento {
     @NonNull
     private LocalDateTime data;

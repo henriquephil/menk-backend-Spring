@@ -2,12 +2,10 @@ package com.henriquephil.menk.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.henriquephil.menk.domain.enums.Sexo;
-import lombok.NonNull;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
+@Getter
+@ToString
 @JsonDeserialize(as = DadosPessoaFisica.class)
 public class DadosPessoaFisica implements DadosPessoa{
     @NonNull

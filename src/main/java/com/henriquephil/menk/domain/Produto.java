@@ -1,15 +1,13 @@
 package com.henriquephil.menk.domain;
 
 import com.henriquephil.menk.domain.enums.ProdutoTipo;
-import lombok.NonNull;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 
-@Data
-@NoArgsConstructor
+@Getter
+@ToString
 @Document
 public class Produto {
     private String id;
@@ -23,4 +21,15 @@ public class Produto {
     private String ncm;
     private String unidadeMedida;
     private BigDecimal valorUnitario;
+
+    protected Produto(){}
+
+    public Produto(ProdutoTipo tipo, String gtin, String descricao, String ncm, String unidadeMedida, BigDecimal valorUnitario) {
+        this.tipo = tipo;
+        this.gtin = gtin;
+        this.descricao = descricao;
+        this.ncm = ncm;
+        this.unidadeMedida = unidadeMedida;
+        this.valorUnitario = valorUnitario;
+    }
 }

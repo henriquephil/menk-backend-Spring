@@ -2,16 +2,16 @@ package com.henriquephil.menk.domain;
 
 import com.henriquephil.menk.domain.enums.EntidadeTipo;
 import com.henriquephil.menk.domain.enums.EntidadeTipoPessoa;
-import lombok.NonNull;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.mongodb.lang.NonNull;
+import lombok.Getter;
+import lombok.ToString;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
-@NoArgsConstructor
+@Getter
+@ToString
 @Document
 public class Entidade {
     private String id;
@@ -24,6 +24,15 @@ public class Entidade {
     private Endereco endereco;
     @NonNull
     private DadosPessoa dadosPessoa;
+
+    protected Entidade(){}
+
+    public Entidade(EntidadeTipoPessoa tipoPessoa, Set<EntidadeTipo> tipos, Endereco endereco, DadosPessoa dadosPessoa) {
+        this.tipoPessoa = tipoPessoa;
+        this.tipos.addAll(tipos);
+        this.endereco = endereco;
+        this.dadosPessoa = dadosPessoa;
+    }
 
     public boolean isTipo(EntidadeTipo tipo) {
         return tipos.contains(tipo);

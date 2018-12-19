@@ -9,7 +9,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@ToString
 @Document
 public class ContaPagar {
     private String id;
@@ -32,11 +33,29 @@ public class ContaPagar {
     @NonNull
     private List<Pagamento> pagamentos = new ArrayList<>();
 
-    public BigDecimal getTotalRecebido() {
+    public ContaPagar() {}
+
+    public ContaPagar(Entidade fornecedor,
+                      String documento,
+                      Integer parcela,
+                      ContaPagarOrigem origem,
+                      LocalDate dataEmissao,
+                      LocalDate dataVencimento,
+                      BigDecimal valor) {
+        this.fornecedor = fornecedor;
+        this.documento = documento;
+        this.parcela = parcela;
+        this.origem = origem;
+        this.dataEmissao = dataEmissao;
+        this.dataVencimento = dataVencimento;
+        this.valor = valor;
+    }
+
+    public BigDecimal getTotalPago() {
         return pagamentos.stream().map(Pagamento::getValor).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
     public BigDecimal getTotalAberto() {
-        return valor.subtract(getTotalRecebido());
+        return valor.subtract(getTotalPago());
     }
 }

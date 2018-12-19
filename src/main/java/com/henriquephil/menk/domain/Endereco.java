@@ -1,8 +1,12 @@
 package com.henriquephil.menk.domain;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 
-@Data
+@Getter
+@ToString
+@AllArgsConstructor
 public class Endereco {
     private String pais;
     private String estado;
@@ -10,4 +14,6 @@ public class Endereco {
     private String codigoPostal;
     private String bairro;
     private String endereco;
+
+    public Endereco(){}
 }

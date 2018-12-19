@@ -1,10 +1,9 @@
 package com.henriquephil.menk.service;
 
 import com.henriquephil.menk.domain.Compra;
-import com.henriquephil.menk.domain.CompraItem;
-import com.henriquephil.menk.domain.EstoqueMovimento;
 import com.henriquephil.menk.domain.enums.EstoqueMovimentoTipo;
 import com.henriquephil.menk.exceptions.NoDocumentFoundException;
+import com.henriquephil.menk.repository.CompraItemRepository;
 import com.henriquephil.menk.repository.CompraRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,27 +14,32 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CompraService {
     private CompraRepository compraRepository;
-    private EstoqueService estoqueService;
+    private CompraItemRepository compraItemRepository;
     private ContaPagarService contaPagarService;
+    private EstoqueService estoqueService;
 
-    public CompraService(CompraRepository compraRepository, EstoqueService estoqueService, ContaPagarService contaPagarService) {
+    public CompraService(CompraRepository compraRepository, CompraItemRepository compraItemRepository, ContaPagarService contaPagarService, EstoqueService estoqueService) {
         this.compraRepository = compraRepository;
-        this.estoqueService = estoqueService;
+        this.compraItemRepository = compraItemRepository;
         this.contaPagarService = contaPagarService;
+        this.estoqueService = estoqueService;
     }
 
     public Compra save(Compra compra) {
+        saveItens(compra);
         compra = compraRepository.save(compra);
-        for (CompraItem compraItem : compra.getItens()) {
-            estoqueService.movimentar(new EstoqueMovimento(compra.getLocal(),
-                    compraItem.getProduto(),
-                    EstoqueMovimentoTipo.ENTRADA,
-                    compraItem.getQuantidade(),
-                    compraItem.getValor(),
-                    compraItem));
+        contaPagarService.saveFrom(compra);
+        return findById(compra.getId());
+    }
+
+    private void saveItens(Compra compra) {
+        if (compra.getId() != null) {
+            compraRepository.findById(compra.getId()).map(Compra::getItens).ifPresent(compraItemRepository::deleteAll);
         }
-        contaPagarService.criarPelaOrigem(compra);
-        return compra;
+        compra.getItens().forEach(item -> {
+            compraItemRepository.save(item);
+            estoqueService.save(compra.getLocal(), compra.getDataEntrada(), item, EstoqueMovimentoTipo.ENTRADA);
+        });
     }
 
     public Page<Compra> findPage(Pageable pageable) {

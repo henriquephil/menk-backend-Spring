@@ -4,7 +4,10 @@ import com.henriquephil.menk.domain.Produto;
 import com.henriquephil.menk.service.ProdutoService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 @RestController
 @RequestMapping("produto")
@@ -18,13 +21,13 @@ public class ProdutoController {
 
     @PostMapping
     public Produto post(@RequestBody Produto produto) {
-        produto.setId(null);
+        Assert.isTrue(produto.getId() == null, "Atributo id já preenchido");
         return produtoService.save(produto);
     }
 
     @PutMapping("/{id}")
     public Produto put(@PathVariable String id, @RequestBody Produto produto) {
-        produto.setId(id);
+        Assert.isTrue(!Objects.equals(id, produto.getId()), "Atributo id inconsistente");
         return produtoService.save(produto);
     }
 

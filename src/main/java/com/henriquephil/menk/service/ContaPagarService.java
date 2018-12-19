@@ -1,9 +1,9 @@
 package com.henriquephil.menk.service;
 
-import com.henriquephil.menk.domain.Compra;
 import com.henriquephil.menk.domain.ContaPagar;
 import com.henriquephil.menk.domain.ContaPagarOrigem;
 import com.henriquephil.menk.domain.enums.EntidadeTipo;
+import com.henriquephil.menk.exceptions.ContaJaBaixadaException;
 import com.henriquephil.menk.exceptions.NoDocumentFoundException;
 import com.henriquephil.menk.repository.ContaPagarRepository;
 import org.springframework.data.domain.Page;
@@ -12,9 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.util.Collections;
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -26,7 +25,7 @@ public class ContaPagarService {
         this.contaPagarRepository = contaPagarRepository;
     }
 
-    public ContaPagar save(ContaPagar contaPagar) {
+    public ContaPagar saveFrom(ContaPagar contaPagar) {
         Assert.isTrue(contaPagar.getFornecedor().isTipo(EntidadeTipo.FORNECEDOR), "Entidade não é um fornecedor");
         return contaPagarRepository.save(contaPagar);
     }
@@ -44,22 +43,29 @@ public class ContaPagarService {
         return contaPagarRepository.findById(id).orElseThrow(NoDocumentFoundException::new);
     }
 
-    private List<ContaPagar> findByOrigem(ContaPagarOrigem origem) {
+    public List<ContaPagar> findByOrigem(ContaPagarOrigem origem) {
         return contaPagarRepository.findByOrigem(origem);
     }
 
-    public void criarPelaOrigem(ContaPagarOrigem origem) {
-        findByOrigem(origem).forEach(this::delete);
+    public void saveFrom(ContaPagarOrigem origem) {
+        List<ContaPagar> contasPagar = findByOrigem(origem);
+        contasPagar.forEach(contaPagar -> {
+            if (contaPagar.getPagamentos().size() > 0) {
+                throw new ContaJaBaixadaException(contaPagar);
+            }
+            delete(contaPagar);
+        });
         final AtomicInteger ai = new AtomicInteger();
         origem.getCondicaoPagamento().getParcelas().forEach(cpParc -> {
+            BigDecimal valor = origem.getTotalLiquido().multiply(cpParc.getFracao());
             ContaPagar contaPagar = new ContaPagar(origem.getFornecedor(),
                     origem.getDocumento(),
                     ai.incrementAndGet(),
                     origem,
                     origem.getDataEmissao(),
-                    origem.getDataEmissao().plusDays(cpParc.getDias()));
-            contaPagar.setValor(origem.getTotalLiquido().multiply(cpParc.getFracao()));
-            save(contaPagar);
+                    origem.getDataEmissao().plusDays(cpParc.getDias()),
+                    valor);
+            saveFrom(contaPagar);
         });
     }
 }

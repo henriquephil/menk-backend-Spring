@@ -1,15 +1,19 @@
 package com.henriquephil.menk.domain;
 
-import lombok.NonNull;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Data
-@NoArgsConstructor
+@Getter
+@ToString
 @Document
 public class EstoqueLocal {
     private String id;
     @NonNull
     private String descricao;
+
+    protected EstoqueLocal() {}
+
+    public EstoqueLocal(String descricao) {
+        this.descricao = descricao;
+    }
 }
