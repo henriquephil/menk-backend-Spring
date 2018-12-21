@@ -32,11 +32,11 @@ public class EstoqueService {
             switch (movimento.getTipo()) {
                 case ENTRADA:
                     quantidadeFinal = quantidadeFinal.add(movimento.getQuantidade());
-                    valorFinal = valorFinal.add(movimento.getValor());
+                    valorFinal = valorFinal.add(movimento.getValor().multiply(movimento.getQuantidade()));
                     break;
                 case SAIDA:
                     quantidadeFinal = quantidadeFinal.subtract(movimento.getQuantidade());
-                    valorFinal = valorFinal.subtract(movimento.getValor());
+                    valorFinal = valorFinal.subtract(movimento.getValor().multiply(movimento.getQuantidade()));
                     break;
             }
             movimento.corrigeSaldo(quantidadeFinal, valorFinal);

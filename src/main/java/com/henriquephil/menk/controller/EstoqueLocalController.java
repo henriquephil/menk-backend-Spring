@@ -26,7 +26,7 @@ public class EstoqueLocalController {
 
     @PutMapping("/{id}")
     public EstoqueLocal put(@PathVariable String id, @RequestBody EstoqueLocal estoqueLocal) {
-        Assert.isTrue(!Objects.equals(id, estoqueLocal.getId()), "Atributo id inconsistente");
+        Assert.isTrue(Objects.equals(id, estoqueLocal.getId()), "Atributo id inconsistente");
         return estoqueLocalService.save(estoqueLocal);
     }
 

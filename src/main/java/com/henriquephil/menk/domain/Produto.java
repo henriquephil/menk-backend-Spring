@@ -15,19 +15,19 @@ public class Produto {
     private Boolean ativo = true;
     @NonNull
     private ProdutoTipo tipo;
-    private String gtin;
     @NonNull
     private String descricao;
+    private String gtin;
     private String ncm;
     private String unidadeMedida;
     private BigDecimal valorUnitario;
 
     protected Produto(){}
 
-    public Produto(ProdutoTipo tipo, String gtin, String descricao, String ncm, String unidadeMedida, BigDecimal valorUnitario) {
+    public Produto(ProdutoTipo tipo, String descricao, String gtin, String ncm, String unidadeMedida, BigDecimal valorUnitario) {
         this.tipo = tipo;
-        this.gtin = gtin;
         this.descricao = descricao;
+        this.gtin = gtin;
         this.ncm = ncm;
         this.unidadeMedida = unidadeMedida;
         this.valorUnitario = valorUnitario;

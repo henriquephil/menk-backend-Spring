@@ -27,7 +27,7 @@ public class EntidadeController {
 
     @PutMapping("/{id}")
     public Entidade put(@PathVariable String id, @RequestBody Entidade entidade) {
-        Assert.isTrue(!Objects.equals(id, entidade.getId()), "Atributo id inconsistente");
+        Assert.isTrue(Objects.equals(id, entidade.getId()), "Atributo id inconsistente");
         return entidadeService.save(entidade);
     }
 

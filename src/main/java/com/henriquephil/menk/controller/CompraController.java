@@ -27,7 +27,7 @@ public class CompraController {
 
     @PutMapping("/{id}")
     public Compra put(@PathVariable String id, @RequestBody Compra compra) {
-        Assert.isTrue(!Objects.equals(id, compra.getId()), "Atributo id inconsistente");
+        Assert.isTrue(Objects.equals(id, compra.getId()), "Atributo id inconsistente");
         return compraService.save(compra);
     }
 

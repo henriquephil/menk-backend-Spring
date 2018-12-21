@@ -26,7 +26,7 @@ public class CondicaoPagamentoController {
 
     @PutMapping("/{id}")
     public CondicaoPagamento put(@PathVariable String id, @RequestBody CondicaoPagamento condicaoPagamento) {
-        Assert.isTrue(!Objects.equals(id, condicaoPagamento.getId()), "Atributo id inconsistente");
+        Assert.isTrue(Objects.equals(id, condicaoPagamento.getId()), "Atributo id inconsistente");
         return condicaoPagamentoService.save(condicaoPagamento);
     }
 

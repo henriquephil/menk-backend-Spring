@@ -27,7 +27,7 @@ public class ProdutoController {
 
     @PutMapping("/{id}")
     public Produto put(@PathVariable String id, @RequestBody Produto produto) {
-        Assert.isTrue(!Objects.equals(id, produto.getId()), "Atributo id inconsistente");
+        Assert.isTrue(Objects.equals(id, produto.getId()), "Atributo id inconsistente");
         return produtoService.save(produto);
     }
 

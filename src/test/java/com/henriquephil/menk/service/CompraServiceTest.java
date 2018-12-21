@@ -46,7 +46,7 @@ public class CompraServiceTest {
         var fornecedor = entidadeService.save(new Entidade(EntidadeTipoPessoa.JURIDICA, Set.of(EntidadeTipo.FORNECEDOR), endereco, new DadosPessoaJuridica("Menk", "01.333.666/0001-99")));
         var local = estoqueLocalService.save(new EstoqueLocal("Estoque"));
         var condicaoPagamento = condicaoPagamentoService.save(new CondicaoPagamento("30 DIAS", List.of(new CondicaoPagamentoParcela(30, new BigDecimal(1)))));
-        var produto1 = produtoService.save(new Produto(ProdutoTipo.PRODUTO, null, "Produto 1", null, "UN", new BigDecimal(100)));
+        var produto1 = produtoService.save(new Produto(ProdutoTipo.PRODUTO, "Produto 1", null, null, "UN", new BigDecimal(100)));
 
         Compra compra = new Compra(fornecedor, "65489", LocalDate.now(), LocalDateTime.now(), local, condicaoPagamento);
         compra.addItem(new CompraItem(produto1, new BigDecimal(10), new BigDecimal(6.5)));
@@ -55,6 +55,7 @@ public class CompraServiceTest {
 
         Optional<EstoqueMovimento> estoqueMovimento = estoqueService.findByOrigem(compra.getItens().get(0));
         Assert.assertTrue(estoqueMovimento.isPresent());
+        Assert.assertEquals(65, estoqueMovimento.get().getValorEstoque().intValue());
         Page<ContaPagar> contaPagar = contaPagarService.findPage(PageRequest.of(0, 1));
         Assert.assertEquals(1, contaPagar.getSize());
         Assert.assertEquals(new BigDecimal(65), contaPagar.getContent().get(0).getValor());
