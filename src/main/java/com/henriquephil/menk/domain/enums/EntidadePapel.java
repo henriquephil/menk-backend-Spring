@@ -1,6 +1,6 @@
 package com.henriquephil.menk.domain.enums;
 
-public enum EntidadeTipo {
+public enum EntidadePapel {
     CLIENTE,
-    FORNECEDOR;
+    FORNECEDOR
 }

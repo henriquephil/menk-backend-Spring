@@ -1,6 +1,6 @@
 package com.henriquephil.menk.domain;
 
-import com.henriquephil.menk.domain.enums.EntidadeTipo;
+import com.henriquephil.menk.domain.enums.EntidadePapel;
 import com.henriquephil.menk.domain.enums.EntidadeTipoPessoa;
 import com.mongodb.lang.NonNull;
 import lombok.Getter;
@@ -18,7 +18,7 @@ public class Entidade {
     @NonNull
     private Boolean ativo = true;
     @NonNull
-    private Set<EntidadeTipo> tipos = new HashSet<>();
+    private Set<EntidadePapel> papeis = new HashSet<>();
     @NonNull
     private EntidadeTipoPessoa tipoPessoa;
     private Endereco endereco;
@@ -27,14 +27,14 @@ public class Entidade {
 
     protected Entidade(){}
 
-    public Entidade(EntidadeTipoPessoa tipoPessoa, Set<EntidadeTipo> tipos, Endereco endereco, DadosPessoa dadosPessoa) {
+    public Entidade(EntidadeTipoPessoa tipoPessoa, Set<EntidadePapel> papeis, Endereco endereco, DadosPessoa dadosPessoa) {
         this.tipoPessoa = tipoPessoa;
-        this.tipos.addAll(tipos);
+        this.papeis.addAll(papeis);
         this.endereco = endereco;
         this.dadosPessoa = dadosPessoa;
     }
 
-    public boolean isTipo(EntidadeTipo tipo) {
-        return tipos.contains(tipo);
+    public boolean hasPapel(EntidadePapel papel) {
+        return papeis.contains(papel);
     }
 }

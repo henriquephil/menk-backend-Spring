@@ -24,7 +24,7 @@ public class CondicaoPagamentoService {
     public CondicaoPagamento save(CondicaoPagamento condicaoPagamento) {
         Assert.notEmpty(condicaoPagamento.getParcelas(), "Nenhuma parcela configurada para condição de pagamento");
         BigDecimal totalParcelas = condicaoPagamento.getParcelas().stream().map(CondicaoPagamentoParcela::getFracao).reduce(BigDecimal.ZERO, BigDecimal::add);
-        Assert.isTrue(totalParcelas.intValue() == 1, "Total das parcelas não é de 100%");
+        Assert.isTrue(totalParcelas.compareTo(BigDecimal.ONE) == 0, "Total das parcelas não é de 100%");
         return condicaoPagamentoRepository.save(condicaoPagamento);
     }
 

@@ -2,7 +2,7 @@ package com.henriquephil.menk.service;
 
 import com.henriquephil.menk.domain.ContaPagar;
 import com.henriquephil.menk.domain.ContaPagarOrigem;
-import com.henriquephil.menk.domain.enums.EntidadeTipo;
+import com.henriquephil.menk.domain.enums.EntidadePapel;
 import com.henriquephil.menk.exceptions.ContaJaBaixadaException;
 import com.henriquephil.menk.exceptions.NoDocumentFoundException;
 import com.henriquephil.menk.repository.ContaPagarRepository;
@@ -26,7 +26,7 @@ public class ContaPagarService {
     }
 
     public ContaPagar saveFrom(ContaPagar contaPagar) {
-        Assert.isTrue(contaPagar.getFornecedor().isTipo(EntidadeTipo.FORNECEDOR), "Entidade não é um fornecedor");
+        Assert.isTrue(contaPagar.getFornecedor().hasPapel(EntidadePapel.FORNECEDOR), "Entidade não é um fornecedor");
         return contaPagarRepository.save(contaPagar);
     }
 

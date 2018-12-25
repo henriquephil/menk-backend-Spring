@@ -1,7 +1,7 @@
 package com.henriquephil.menk.service;
 
 import com.henriquephil.menk.domain.*;
-import com.henriquephil.menk.domain.enums.EntidadeTipo;
+import com.henriquephil.menk.domain.enums.EntidadePapel;
 import com.henriquephil.menk.domain.enums.EntidadeTipoPessoa;
 import com.henriquephil.menk.domain.enums.ProdutoTipo;
 import org.junit.Assert;
@@ -43,7 +43,7 @@ public class CompraServiceTest {
     @Test
     public void save() {
         var endereco = new Endereco("Brasil", "Santa Catarina", "São Ludgero", "88730-000", "Beira Rio", "Rua Joinville, 375");
-        var fornecedor = entidadeService.save(new Entidade(EntidadeTipoPessoa.JURIDICA, Set.of(EntidadeTipo.FORNECEDOR), endereco, new DadosPessoaJuridica("Menk", "01.333.666/0001-99")));
+        var fornecedor = entidadeService.save(new Entidade(EntidadeTipoPessoa.JURIDICA, Set.of(EntidadePapel.FORNECEDOR), endereco, new DadosPessoaJuridica("Menk", "01.333.666/0001-99")));
         var local = estoqueLocalService.save(new EstoqueLocal("Estoque"));
         var condicaoPagamento = condicaoPagamentoService.save(new CondicaoPagamento("30 DIAS", List.of(new CondicaoPagamentoParcela(30, new BigDecimal(1)))));
         var produto1 = produtoService.save(new Produto(ProdutoTipo.PRODUTO, "Produto 1", null, null, "UN", new BigDecimal(100)));
